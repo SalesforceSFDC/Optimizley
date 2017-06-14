@@ -13,6 +13,11 @@
 ### Performance Profiling
 
 * [A Guide to Application Performance Profiling in Force.com](https://developer.salesforce.com/page/A_Guide_to_Application_Performance_Profiling_in_Force.com)
+
+* Define the scope of the task. Split business scenarios into a subset of operations, functionalities or simply by pages.
+* For each task, measure the performance of the application (e.g., a Visualforce page) and identify potential bottlenecks.
+* Identify and fix the bottlenecks’ root causes.
+* Compare results and repeat steps 1, 2 and 3 until you remove the bottlenecks or minimize their effects.
  
  
 ### Stress Testing
