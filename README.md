@@ -9,6 +9,10 @@
  
 ### Performance Testing
 * [Set Up Debug Logging](https://help.salesforce.com/articleView?id=code_add_users_debug_log.htm&language=en_US&type=0)
+
+### Performance Profiling
+
+* [A Guide to Application Performance Profiling in Force.com](https://developer.salesforce.com/page/A_Guide_to_Application_Performance_Profiling_in_Force.com)
  
  
 ### Stress Testing
