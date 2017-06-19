@@ -1,0 +1,29 @@
+trigger Z_SubscriptionCrmTrigger on Subscription__c (after insert, after update) {
+    System.debug('Starting Z_SubscriptionCrmTrigger');
+    Set<ID> idSet = new Set<ID>();
+    if(Trigger.isInsert && Trigger.isAfter){
+        System.debug('Is insert and is after');
+        for(Subscription__c sub : Trigger.new){
+            System.debug('sub: ' + sub);
+            if(sub.Account__c != null && String.isNotBlank(sub.Account_Code__c)){
+                idSet.add(sub.ID);
+                System.debug('adding sub id ' + sub.ID);
+            }
+        }
+    } else if(Trigger.isUpdate && Trigger.isAfter){
+        System.debug('Is update and is after');
+        for( id subId: Trigger.newMap.keyset()){
+            Subscription__c oldSub = Trigger.oldMap.get(subID);
+            Subscription__c newSub = Trigger.newMap.get(subID);
+            if(newSub.Account__c != null & oldSub.Account__c != newSub.Account__c && String.isNotBlank(newSub.Account_Code__c)){
+                idSet.add(newSub.ID);
+                System.debug('adding sub id ' + newsub.ID);
+            }
+        }
+    }
+
+    if(!idSet.isEmpty()){
+        System.debug('idSet ' + idset);
+        Z_SubscriptionCrmController.processIds(idSet);
+    }
+}
