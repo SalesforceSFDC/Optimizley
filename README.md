@@ -25,3 +25,6 @@
 ### Stress Testing
  
 ### Load Testing
+
+### Dependencies
+A dependency is created when one component references another component, permission, or preference, which must exist for the component to be valid. The components listed below have dependencies. In addition, the object-level operational scope, that is, the data manipulation language (DML) operations contained in an Apex script on an object, is also listed. To see field-level detail of the operational scope, click Fields next to name of an object.
