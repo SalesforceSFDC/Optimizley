@@ -1,0 +1,45 @@
+trigger updateQuoteMatrix on zqu__Quote__c ( after update, before update, after insert) {
+    if(Trigger.isBefore){
+        if(Trigger.isUpdate){
+            System.debug('Inside before update quote trigger.'); 
+            // Martin Huzvar code
+            List<ID> quoteIDsForMatrix = new List<ID>();
+            System.debug('quote trigger1' + Trigger.new);
+            for(zqu__Quote__c quote : Trigger.new){
+                if(quote.Quote_Preview__c == TRUE){
+                    System.debug('inside trigger');
+                    quote.zqu__Is_Charge_Expired__c=TRUE;
+                    quote.Quote_Preview__c = FALSE;
+                    quoteIDsForMatrix.add(quote.Id);
+                }
+            }
+            System.debug('quoteIDsForMatrix: ' + quoteIDsForMatrix);
+            if(!quoteIDsForMatrix.isEmpty()){
+                updateQuoteMatrix.updateQM1(quoteIDsForMatrix);
+            }
+        }
+    }
+    else if(Trigger.isAfter && Trigger.isUpdate){
+        System.debug('Inside after update quote trigger.'); 
+                // Ajanta code
+                Map<Id, zqu__Quote__c> oldQsMap; 
+                oldQsMap = Trigger.oldMap; 
+                if(System.isFuture() == false){
+                    List<zqu__Quote__c> quotesToSend = new List<zqu__Quote__c>();
+                    if(!SendToZBillingProcessControl.isFutureContext){
+                        for(zqu__Quote__c quote : Trigger.new){
+                            
+                            if(quote.Ready_to_Send_to_Zuora__c != oldQsMap.get(quote.Id).Ready_to_Send_to_Zuora__c &&
+                              quote.Ready_to_Send_to_Zuora__c == true && quote.zqu__Status__c != 'Sent to Z-Billing'){                    
+                                quotesToSend.add(quote); 
+                            }                   
+                        }
+                        if(!quotesToSend.isEmpty()){
+                            System.debug('Calling calSendToZuora method from SendToZBilling class.');
+                            SendToZBilling.callSendToZuora(quotesToSend);
+                        }
+                    }
+                }  
+            
+    }
+}
