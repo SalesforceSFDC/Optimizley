@@ -1,0 +1,34 @@
+trigger updateQuoteMatrixFromRPCH on zqu__QuoteRatePlanCharge__c (after update) {
+    // Martin Huzvar code
+    List<ID> quoteIDsForMatrix = new List<ID>();
+    List<ID> quoteRatePlanIDs = new List<ID>();
+    List<zqu__Quote__c> quotes = new List<zqu__Quote__c>();
+    List<zqu__Quote__c> quotesForUpdate = new List<zqu__Quote__c>();
+    List<ID> quoteIDsForFirstUpdate = new List<ID>();
+    List<zqu__QuoteRatePlan__c> qrpchIDs = new List<zqu__QuoteRatePlan__c>();
+    System.debug('quote QRPCH trigger' + Trigger.new);
+    for(zqu__QuoteRatePlanCharge__c qrpch : Trigger.new){
+        quoteRatePlanIDs.add(qrpch.zqu__QuoteRatePlan__c);
+    }
+    if(!quoteRatePlanIDs.isEmpty()){
+        qrpchIDs = [Select Id,zqu__Quote__c from zqu__QuoteRatePlan__c where Id=:quoteRatePlanIDs];
+    }
+    for(zqu__QuoteRatePlan__c qrpch : qrpchIDs){
+        quoteIDsForFirstUpdate.add(qrpch.zqu__Quote__c);
+    }
+    if(!quoteIDsForFirstUpdate.isEmpty()){
+        quotes = [Select Id,Quote_Preview__c,zqu__Is_Charge_Expired__c from zqu__Quote__c where Id=:quoteIDsForFirstUpdate];
+    }
+    for(zqu__Quote__c quote : quotes){
+        quote.zqu__Is_Charge_Expired__c=TRUE;
+        quote.Quote_Preview__c = FALSE;
+        quotesForUpdate.add(quote);
+        quoteIDsForMatrix.add(quote.Id);
+    }
+    if(!quotesForUpdate.isEmpty()){
+        update(quotesForUpdate);
+    }
+    if(!quoteIDsForMatrix.isEmpty()){
+        updateQuoteMatrix.updateQM1(quoteIDsForMatrix);
+    }
+}
